@@ -1,0 +1,13 @@
+package com.diabiga.soro;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ChezMoiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ChezMoiApplication.class, args);
+	}
+
+}
