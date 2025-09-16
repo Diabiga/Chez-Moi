@@ -2,6 +2,9 @@ package com.diabiga.soro.web;
 
 import com.diabiga.soro.model.Annonce;
 import com.diabiga.soro.sercice.Interface.AnnonceInterface;
+import com.diabiga.soro.service.MailService;
+import com.diabiga.soro.repository.AnnonceRepository;
+import com.diabiga.soro.service.AnnonceSpecifications;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -20,19 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnnonceController {
 
 	private final AnnonceInterface annonceService;
+    private final MailService mailService;
+    private final AnnonceRepository annonceRepository;
 
-	public AnnonceController(AnnonceInterface annonceService) {
+	public AnnonceController(AnnonceInterface annonceService, MailService mailService, AnnonceRepository annonceRepository) {
 		this.annonceService = annonceService;
+		this.mailService = mailService;
+		this.annonceRepository = annonceRepository;
 	}
 
 	@GetMapping
 	public List<Annonce> list(@RequestParam(name = "categoryId", required = false) Long categoryId,
-								@RequestParam(name = "communeId", required = false) Long communeId) {
-		List<Annonce> all = annonceService.getAll();
-		return all.stream()
-				.filter(a -> categoryId == null || (a.getCategory() != null && a.getCategory().getId().equals(categoryId)))
-				.filter(a -> communeId == null || (a.getCommune() != null && a.getCommune().getId().equals(communeId)))
-				.toList();
+								@RequestParam(name = "communeId", required = false) Long communeId,
+								@RequestParam(name = "type", required = false) String type,
+								@RequestParam(name = "min", required = false) java.math.BigDecimal min,
+								@RequestParam(name = "max", required = false) java.math.BigDecimal max) {
+		return annonceRepository.findAll(
+				AnnonceSpecifications.hasCategoryId(categoryId)
+						.and(AnnonceSpecifications.hasCommuneId(communeId))
+						.and(AnnonceSpecifications.hasType(type))
+						.and(AnnonceSpecifications.priceBetween(min, max))
+		);
 	}
 
 	@GetMapping("/{id}")
@@ -45,6 +56,9 @@ public class AnnonceController {
 	@PostMapping
 	public ResponseEntity<Annonce> create(@RequestBody Annonce annonce) {
 		Annonce saved = annonceService.create(annonce);
+		if (saved.getOwner() != null && saved.getOwner().getEmail() != null) {
+			mailService.send(saved.getOwner().getEmail(), "Annonce publiée", "Votre annonce a été publiée.");
+		}
 		return ResponseEntity.created(URI.create("/api/annonces/" + saved.getId())).body(saved);
 	}
 

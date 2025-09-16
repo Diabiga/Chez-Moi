@@ -3,6 +3,7 @@ package com.diabiga.soro.web;
 import com.diabiga.soro.model.User;
 import com.diabiga.soro.repository.UserRepository;
 import com.diabiga.soro.security.JwtService;
+import com.diabiga.soro.service.MailService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,13 +26,15 @@ public class AuthController {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
+	private final MailService mailService;
 
 	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-				PasswordEncoder passwordEncoder, JwtService jwtService) {
+				PasswordEncoder passwordEncoder, JwtService jwtService, MailService mailService) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
+		this.mailService = mailService;
 	}
 
 	@PostMapping("/register")
@@ -46,6 +49,7 @@ public class AuthController {
 		user.setDisplayName(request.displayName());
 		user.setProfileType(request.profileType());
 		userRepository.save(user);
+		mailService.send(user.getEmail(), "Bienvenue sur ChezMoi Abidjan", "Votre compte a été créé avec succès.");
 		return ResponseEntity.created(URI.create("/api/users/" + user.getId())).build();
 	}
 

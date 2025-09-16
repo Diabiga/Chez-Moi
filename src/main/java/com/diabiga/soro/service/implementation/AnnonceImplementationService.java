@@ -4,6 +4,7 @@ import com.diabiga.soro.sercice.Interface.AnnonceInterface;
 import com.diabiga.soro.model.Annonce;
 import com.diabiga.soro.repository.AnnonceRepository;
 import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,9 @@ public class AnnonceImplementationService implements AnnonceInterface {
 
 	@Override
 	public Annonce create(Annonce annonce) {
+		if (annonce.getCreatedAt() == null) {
+			annonce.setCreatedAt(Instant.now());
+		}
 		return annonceRepository.save(annonce);
 	}
 
@@ -40,8 +44,9 @@ public class AnnonceImplementationService implements AnnonceInterface {
 		existing.setTitre(annonce.getTitre());
 		existing.setDescription(annonce.getDescription());
 		existing.setNombrePiece(annonce.getNombrePiece());
-		existing.setPrix(annonce.getPrix());
+		existing.setPrixFcfa(annonce.getPrixFcfa());
 		existing.setContact(annonce.getContact());
+		existing.setType(annonce.getType());
 		return annonceRepository.save(existing);
 	}
 
