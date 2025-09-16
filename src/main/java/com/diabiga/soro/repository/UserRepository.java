@@ -1,4 +1,4 @@
-package com.diabiga.soro.Reposotery;
+package com.diabiga.soro.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -7,3 +7,4 @@ import com.diabiga.soro.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 }
+
