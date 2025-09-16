@@ -15,8 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "region")
-public class Region {
+@Table(name = "category")
+public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +24,7 @@ public class Region {
 
 	private String name;
 
+	private Boolean enabled;
+
 }
+

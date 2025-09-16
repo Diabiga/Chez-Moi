@@ -15,13 +15,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "region")
-public class Region {
+@Table(name = "role")
+public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String name;
+	private String name; // ADMIN, BOUTIQUE, ANNONCEUR
 
 }
+
