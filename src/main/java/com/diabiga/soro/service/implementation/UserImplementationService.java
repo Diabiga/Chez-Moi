@@ -37,7 +37,9 @@ public class UserImplementationService implements UserInterface {
 	public User update(Long id, User user) {
 		User existing = userRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
-		existing.setName(user.getName());
+		existing.setUsername(user.getUsername());
+		existing.setDisplayName(user.getDisplayName());
+		existing.setEmail(user.getEmail());
 		return userRepository.save(existing);
 	}
 

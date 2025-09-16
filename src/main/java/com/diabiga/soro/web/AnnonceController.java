@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,8 +26,13 @@ public class AnnonceController {
 	}
 
 	@GetMapping
-	public List<Annonce> list() {
-		return annonceService.getAll();
+	public List<Annonce> list(@RequestParam(name = "categoryId", required = false) Long categoryId,
+								@RequestParam(name = "communeId", required = false) Long communeId) {
+		List<Annonce> all = annonceService.getAll();
+		return all.stream()
+				.filter(a -> categoryId == null || (a.getCategory() != null && a.getCategory().getId().equals(categoryId)))
+				.filter(a -> communeId == null || (a.getCommune() != null && a.getCommune().getId().equals(communeId)))
+				.toList();
 	}
 
 	@GetMapping("/{id}")
